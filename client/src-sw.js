@@ -1,30 +1,32 @@
-const { offlineFallback, warmStrategyCache } = require('workbox-recipes');
-const { CacheFirst } = require('workbox-strategies');
-const { registerRoute } = require('workbox-routing');
-const { CacheableResponsePlugin } = require('workbox-cacheable-response');
-const { ExpirationPlugin } = require('workbox-expiration');
-const { precacheAndRoute } = require('workbox-precaching/precacheAndRoute');
+import { registerRoute } from 'workbox-routing';
+import { CacheFirst, StaleWhileRevalidate } from 'workbox-strategies';
+import { precacheAndRoute } from 'workbox-precaching';
 
 precacheAndRoute(self.__WB_MANIFEST);
 
-const pageCache = new CacheFirst({
-  cacheName: 'page-cache',
-  plugins: [
-    new CacheableResponsePlugin({
-      statuses: [0, 200],
-    }),
-    new ExpirationPlugin({
-      maxAgeSeconds: 30 * 24 * 60 * 60,
-    }),
-  ],
-});
+registerRoute(
+  ({ request }) =>
+    request.destination === 'script' || request.destination === 'style',
+  new StaleWhileRevalidate()
+);
 
-warmStrategyCache({
-  urls: ['/index.html', '/'],
-  strategy: pageCache,
-});
+registerRoute(
+  ({ request }) => request.destination === 'document',
+  new CacheFirst()
+);
 
-registerRoute(({ request }) => request.mode === 'navigate', pageCache);
+registerRoute(
+  ({ url }) => url.origin === 'https://fonts.googleapis.com',
+  new StaleWhileRevalidate()
+);
 
-// TODO: Implement asset caching
-registerRoute();
+registerRoute(
+  ({ url }) => url.origin === 'https://cdnjs.cloudflare.com',
+  new StaleWhileRevalidate()
+);
+
+registerRoute(
+  ({ url }) =>
+    url.origin === 'https://cdnjs.cloudflare.com' && url.pathname.startsWith('/ajax/libs/codemirror'),
+  new StaleWhileRevalidate()
+);
