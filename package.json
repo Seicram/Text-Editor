@@ -4,13 +4,14 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start:dev": "",
-    "start": "",
-    "server": "",
-    "build": "",
-    "install": "",
-    "client": ""
+    "start:dev": "concurrently \"npm run server\" \"npm run client\"",
+    "start": "node server.js",
+    "server": "nodemon server.js --ignore client",
+    "build": "webpack --mode production",
+    "install": "webpack --mode production && http-server dist",
+    "client": "webpack --watch"
   },
+  
   "keywords": [],
   "author": "",
   "license": "ISC",
