@@ -68,5 +68,4 @@ yarn.lock
 .vscode
 *.xslx
 
-# Ignore all log directories and files
 readme.js
