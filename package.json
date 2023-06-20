@@ -1,4 +1,8 @@
 {
+  "engines": {
+    "node": "14.x"
+  },
+  
   "name": "text-editor",
   "version": "1.0.0",
   "description": "A text editor application",
